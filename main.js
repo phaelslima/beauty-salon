@@ -15,10 +15,10 @@ for (const link of links) {
   })
 }
 
-function changeHeaderWhenScroll() {
-  const header = document.querySelector('#header')
-  const navHeigth = header.offsetHeight
+const header = document.querySelector('#header')
+const navHeigth = header.offsetHeight
 
+function changeHeaderWhenScroll() {
   if (window.scrollY >= navHeigth) {
     header.classList.add('scroll')
   } else {
@@ -32,7 +32,13 @@ const swiper = new Swiper('.swiper', {
     el: '.swiper-pagination'
   },
   mousewheel: true,
-  keyboard: true
+  keyboard: true,
+  breakpoints: {
+    767: {
+      slidesPerView: 2,
+      setWrapperSize: true
+    }
+  }
 })
 
 const scrollReveal = ScrollReveal({
@@ -52,9 +58,9 @@ scrollReveal.reveal(
   { internal: 100 }
 )
 
-function backToTop() {
-  const backToTopButton = document.querySelector('.back-to-top')
+const backToTopButton = document.querySelector('.back-to-top')
 
+function backToTop() {
   window.addEventListener('scroll', function () {
     if (window.scrollY >= 560) {
       backToTopButton.classList.add('show')
@@ -64,7 +70,35 @@ function backToTop() {
   })
 }
 
+const sections = document.querySelectorAll('main section[id]')
+
+console.log(sections)
+
+function activateMenuAtCurrentSection() {
+  const checkpoint = window.pageYOffset + (window.innerHeight / 8) * 4
+
+  for (const section of sections) {
+    const sectionTop = section.offsetTop
+    const sectionHeight = section.offsetHeight
+    const sectionId = section.getAttribute('id')
+
+    const checkpointStart = checkpoint >= sectionTop
+    const checkpointEnd = checkpoint <= sectionTop + sectionHeight
+
+    if (checkpointStart && checkpointEnd) {
+      document
+        .querySelector('nav ul li a[href*=' + sectionId + ']')
+        .classList.add('active')
+    } else {
+      document
+        .querySelector('nav ul li a[href*=' + sectionId + ']')
+        .classList.remove('active')
+    }
+  }
+}
+
 window.addEventListener('scroll', function () {
   changeHeaderWhenScroll()
   backToTop()
+  activateMenuAtCurrentSection()
 })
